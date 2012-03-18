@@ -17,7 +17,6 @@ def alphabeta_search(state, game, d=4, cutoff_test=None, eval_fn=None):
     player = game.to_move(state)
     count = 0
     starttime = time.clock()
-    
 
     def max_value(state, alpha, beta, depth):
         global count, testing
@@ -119,4 +118,12 @@ class Game:
 
     def __repr__(self):
         return '<%s>' % self.__class__.__name__
+
+class BoardState:
+    """Holds one state of the Go board."""
+    pass
+
+class Go(Game):
+    pass
+
 
