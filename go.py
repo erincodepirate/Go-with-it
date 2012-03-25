@@ -111,19 +111,46 @@ class Game:
 
     def successors(self, state):
         "Return a list of legal (move, state) pairs."
-        m = [(move, self.make_move(move, state))
+        return [(move, self.make_move(move, state))
                 for move in self.legal_moves(state)]
-        # print "succ len: ", len(m)
-        return m
 
     def __repr__(self):
         return '<%s>' % self.__class__.__name__
 
+Blank = 0
+Black = 1
+White = 2
+
+def opponent(player):
+    """Return the opponent of player or None if player is not valid."""
+    if player == White:
+        return Black
+    elif player == Black:
+        return White
+    else:
+        return None
+
 class BoardState:
-    """Holds one state of the Go board."""
-    pass
+    """Holds one state of the Go board as a tuple of tuples. Supports only odd
+       board sizes greater than or equal to three."""
+    def __init__(self, to_move = Black, size = 19, board = None):
+        self.to_move = to_move
+        if board == None:
+            self.board = (Blank, Blank, Blank)
+            while len(self.board) < size*size:
+                self.board += (Blank, Blank)
+        else:
+            self.board = board
 
 class Go(Game):
-    pass
-
+    def legal_moves(self, state):
+        pass
+    
+    def make_move(self, move, state):
+        new_board = BoardState(opponent(state.to_move), state.size, \
+                    tuple(board[:move], state.to_move, board[move + 1:]))
+        
+    
+    def utility(self, state, player)
+        pass
 
