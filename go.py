@@ -215,6 +215,7 @@ class Go(Game):
     def make_move(self, move, state):
         new_board = BoardState(opponent(state.to_move), state.size, state)
         
+        # To be implemented...
         
         return new_board
         
@@ -225,6 +226,9 @@ class Go(Game):
     # one other cell.
     def enclosures(self, move, state):
         # Start forming adjacency lists...
+        
+        # To be implemented...
+        
         alists = [[move]]
         for n in self.neighbors(state, move):
             if allied(n, move):
