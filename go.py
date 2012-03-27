@@ -117,10 +117,12 @@ class Game:
     def __repr__(self):
         return '<%s>' % self.__class__.__name__
 
-Empty = 0
-Black = 1
-White = 2
-Outer = 3
+Open  = 0
+Black  = 1
+TBlack = 2
+White  = 3
+TWhite = 4
+Outer  = 5
 
 def opponent(player):
     """Return the opponent of player or None if player is not valid."""
@@ -137,26 +139,115 @@ class BoardState:
        edge in each direction -- these outer cells contain entries called Outer"""
     def __init__(self, to_move = Black, size = 19, board = None):
         self.to_move = to_move
+        self.size = size
         if board == None:
-            self.board = [[Empty]*(size+2)]*size+2
-            for row in self.board:
-                row[0] = row[-1] = Outer
-            for entry in self.board[0]:
-                entry = Outer
-            for entry in self.board[-1]:
-                entry = Outer
+            self.board = [Open]*((size+2)**2)
+            for index in range(size + 2):
+                self.change(index, 0, Outer)
+                self.change(index, size + 1, Outer)
+                self.change(0, index, Outer)
+                self.change(size + 1, index, Outer)
         else:
             self.board = board
+    
+    # Return the value of the cell at row, col
+    def get(self, row, col):
+        return self.board[row*(self.size + 2) + col]
+    
+    # Same as get() with row and col in a tuple
+    def gett(self, pair):
+        return self.board[pair[0]*(self.size + 2) + pair[1]]
+    
+    # Change the value at row, col to the given value
+    # ("set" is a goddamn reserved word...)
+    def change(self, row, col, val):
+        self.board[row*(self.size + 2) + col] = val
+        
+    # Same as change() with row and col in a tuple
+    def changet(self, pair, val):
+        self.board[pair[0]*(self.size + 2) + pair[1]] = val
+    
+    # Gather legal moves and other potentially useful information in one pass.
+    # The responsibility to call this method lies outside this class.
+    # Fine-grained properties needed by heuristics should be determined here.
+    def stat_gen(self):
+        self.legal_move_list = []
+        self.black_stone_list = []
+        self.white_stone_list = []
+        for i in range(self.size + 2):
+            for j in range(self.size + 2):
+                if self.get(i, j) == Open:
+                    self.legal_move_list.append((i,j))
+                elif self.get(i, j) == Black:
+                    self.black_stone_list.append((i,j))
+                elif self.get(i, j) == White:
+                    self.white_stone_list.append((i,j))
+    
+    # Print the Board in a more-or-less pretty way
+    def display(self):
+        for i in range(1, self.size + 1):
+            for j in range(1, self.size + 1):
+                if self.get(i, j) == Black:
+                    print 'B',
+                elif self.get(i, j) == White:
+                    print 'W',
+                else:
+                    print '.',
+            print "" # Carriage return
+    
+    # Print the entire board as integers including the Outer cells
+    def display_debug(self):
+        for i in range(self.size + 2):
+            for j in range(self.size + 2):
+                print self.get(i, j),
+            print "" # Carriage return
 
 class Go(Game):
-    def legal_moves(self, state):
-        pass
-    
-    def make_move(self, move, state):
-        new_board = BoardState(opponent(state.to_move), state.size, \
-                    tuple(board[:move], state.to_move, board[move + 1:]))
-        
-    
-    def utility(self, state, player)
-        pass
+    def __init__(self):
+        self.current_state = BoardState()
+        self.current_state.stat_gen()
 
+    # Return a list of legal moves as row-col integer 2-tuples.
+    def legal_moves(self, state):
+        return state.legal_move_list
+    
+    # Return a new board with the result of a given move (assumed to be legal).
+    def make_move(self, move, state):
+        new_board = BoardState(opponent(state.to_move), state.size, state)
+        
+        
+        return new_board
+        
+    def utility(self, state, player):
+        pass
+    
+    # Return a list of cycles including the given move which enclose at least
+    # one other cell.
+    def enclosures(self, move, state):
+        # Start forming adjacency lists...
+        alists = [[move]]
+        for n in self.neighbors(state, move):
+            if allied(n, move):
+                alists[0].push(n)
+    
+    # Return true iff cells are considered the same for enclosure purposes.
+    # Beware enclosing the whole board with Outers
+    def allied(self, a, b):
+        return ((a == b) or (a == Outer) or (b == Outer))
+
+    # Return a list of the neighbors of a given location (tuple).
+    def neighbors(self, state, location):
+        row, col = location[0], location[1]
+        nlist = [(row-1, col-1), (row-1, col), (row-1, col+1), (row, col+1), \
+                 (row+1, col+1), (row+1, col), (row+1, col-1), (row, col-1)]
+        if state.gett(location) == Outer:
+            for i in range(8):
+                for j in (0, 1):
+                    if (nlist[i][j] < 0) or (nlist[i][j] > state.size + 1):
+                        nlist.pop(i)
+        return nlist
+        
+        
+        
+        
+        
