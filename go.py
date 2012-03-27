@@ -117,9 +117,10 @@ class Game:
     def __repr__(self):
         return '<%s>' % self.__class__.__name__
 
-Blank = 0
+Empty = 0
 Black = 1
 White = 2
+Outer = 3
 
 def opponent(player):
     """Return the opponent of player or None if player is not valid."""
@@ -131,14 +132,19 @@ def opponent(player):
         return None
 
 class BoardState:
-    """Holds one state of the Go board as a tuple of tuples. Supports only odd
-       board sizes greater than or equal to three."""
+    """Holds one state of the Go board as a list of lists, which is, for all
+       intents and purposes, a 2d list. Dimensions extend one unit past the
+       edge in each direction -- these outer cells contain entries called Outer"""
     def __init__(self, to_move = Black, size = 19, board = None):
         self.to_move = to_move
         if board == None:
-            self.board = (Blank, Blank, Blank)
-            while len(self.board) < size*size:
-                self.board += (Blank, Blank)
+            self.board = [[Empty]*(size+2)]*size+2
+            for row in self.board:
+                row[0] = row[-1] = Outer
+            for entry in self.board[0]:
+                entry = Outer
+            for entry in self.board[-1]:
+                entry = Outer
         else:
             self.board = board
 
