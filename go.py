@@ -183,7 +183,7 @@ class BoardState:
                 elif self.get(i, j) == White:
                     self.white_stone_list.append((i,j))
     
-    # Print the Board in a more-or-less pretty way
+    # Print the board in a more-or-less pretty way
     def display(self):
         for i in range(1, self.size + 1):
             for j in range(1, self.size + 1):
@@ -239,17 +239,20 @@ class Go(Game):
     def allied(self, a, b):
         return ((a == b) or (a == Outer) or (b == Outer))
 
-    # Return a list of the neighbors of a given location (tuple).
+    # Return a tuple of the neighbors of a given location.
     def neighbors(self, state, location):
         row, col = location[0], location[1]
-        nlist = [(row-1, col-1), (row-1, col), (row-1, col+1), (row, col+1), \
-                 (row+1, col+1), (row+1, col), (row+1, col-1), (row, col-1)]
+        nt = ((row-1, col-1), (row-1, col), (row-1, col+1), (row, col+1), \
+              (row+1, col+1), (row+1, col), (row+1, col-1), (row, col-1))
         if state.gett(location) == Outer:
+            includelist = range(8)
             for i in range(8):
                 for j in (0, 1):
-                    if (nlist[i][j] < 0) or (nlist[i][j] > state.size + 1):
-                        nlist.pop(i)
-        return nlist
+                    if (nt[i][j] < 0) or (nt[i][j] > state.size + 1):
+                        if i in includelist:
+                            includelist.remove(i)
+            nt = tuple(nt[i] for i in includelist)
+        return nt
         
         
         

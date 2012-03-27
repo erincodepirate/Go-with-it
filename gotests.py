@@ -1,3 +1,5 @@
+#!/bin/env python
+
 # Some simple unit tests for go.py
 
 from go import *
@@ -10,7 +12,8 @@ def test_all():
     
 # Check whether BoardState defaults are correctly initialized
 def test_1():
-    print "\t1. BoardState Initialization Test...",
+    print "\t1. BoardState Initialization Tests...",
+    
     s = BoardState()
     s.stat_gen()
     
@@ -21,6 +24,24 @@ def test_1():
     assert s.black_stone_list == []
     
     print "PASSED."
-    
+
+# Check whether Go's cycle-finding functions are working properly (incomplete)
 def test_2():
-    pass
+    print "\t2. Go Cycle-finding Tests (incomplete)...",
+    
+    g = Go()
+    s = BoardState()
+    s.stat_gen()
+    
+    assert g.neighbors(s, (5,5)) == \
+           ((4,4),(4,5),(4,6),(5,6),(6,6),(6,5),(6,4),(5,4))
+           
+    assert g.neighbors(s, (0,0)) == ((0,1),(1,1),(1,0))
+    
+    assert g.neighbors(s, (7,20)) == ((6,19),(6,20),(8,20),(8,19),(7,19))
+    
+    print "PASSED."
+    
+
+# Run the tests...
+test_all()
