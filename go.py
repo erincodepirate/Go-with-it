@@ -136,7 +136,7 @@ def opponent(player):
 class BoardState:
     """Holds one state of the Go board as a list of lists, which is, for all
        intents and purposes, a 2d list. Dimensions extend one unit past the
-       edge in each direction -- these outer cells contain entries called Outer"""
+       edge in each direction -- these outer nodes contain entries called Outer"""
     def __init__(self, to_move = Black, size = 19, board = None):
         self.to_move = to_move
         self.size = size
@@ -150,7 +150,7 @@ class BoardState:
         else:
             self.board = board
     
-    # Return the value of the cell at row, col
+    # Return the value of the node at row, col
     def get(self, row, col):
         return self.board[row*(self.size + 2) + col]
     
@@ -174,15 +174,46 @@ class BoardState:
         self.legal_move_list = []
         self.black_stone_list = []
         self.white_stone_list = []
-        for i in range(self.size + 2):
-            for j in range(self.size + 2):
+        for i in range(1, self.size + 1):
+            for j in range(1, self.size + 1):
                 if self.get(i, j) == Open:
                     self.legal_move_list.append((i,j))
                 elif self.get(i, j) == Black:
                     self.black_stone_list.append((i,j))
                 elif self.get(i, j) == White:
                     self.white_stone_list.append((i,j))
+                    
+    # Return a tuple of the neighbors of a given location. If allied is set
+    # to True, only nodes of the same type or Outer nodes will be included.
+    # BROKEN WHEN ALLIED SET TRUE...
+    def neighbors(self, location, allied):
+        row, col = location[0], location[1]
+        nt = ((row-1, col-1), (row-1, col), (row-1, col+1), (row, col+1), \
+              (row+1, col+1), (row+1, col), (row+1, col-1), (row, col-1))
+        if self.gett(location) == Outer:
+            includelist = range(8)
+            for i in range(8):
+                for j in (0, 1):
+                    if (nt[i][j] < 0) or (nt[i][j] > self.size + 1):
+                        if i in includelist:
+                            includelist.remove(i)
+                if allied and i in includelist:
+                    print "..."
+                    if not self.same(self.gett(nt[i]), self.gett(location)):
+                        includelist.remove(i)
+            nt = tuple(nt[i] for i in includelist)
+        return nt
+        
+    # Return true iff nodes are considered adjacent for graph / enclosure
+    # purposes.
+    def same(self, a, b):
+        return False #((a == b) or (a == Outer) or (b == Outer))
     
+    def adjacency_tuples(self, player):
+        node_list = black_stone_list if player == Black else white_stone_list
+        return tuple((node) + self.neighbors(node, allied = True) \
+                     for node in node_list)
+
     # Print the board in a more-or-less pretty way
     def display(self):
         for i in range(1, self.size + 1):
@@ -194,14 +225,14 @@ class BoardState:
                 else:
                     print '.',
             print "" # Carriage return
-    
-    # Print the entire board as integers including the Outer cells
+                     
+    # Print the entire board as integers including the Outer nodes
     def display_debug(self):
         for i in range(self.size + 2):
             for j in range(self.size + 2):
                 print self.get(i, j),
             print "" # Carriage return
-
+                     
 class Go(Game):
     def __init__(self):
         self.current_state = BoardState()
@@ -222,39 +253,3 @@ class Go(Game):
     def utility(self, state, player):
         pass
     
-    # Return a list of cycles including the given move which enclose at least
-    # one other cell.
-    def enclosures(self, move, state):
-        # Start forming adjacency lists...
-        
-        # To be implemented...
-        
-        alists = [[move]]
-        for n in self.neighbors(state, move):
-            if allied(n, move):
-                alists[0].push(n)
-    
-    # Return true iff cells are considered the same for enclosure purposes.
-    # Beware enclosing the whole board with Outers
-    def allied(self, a, b):
-        return ((a == b) or (a == Outer) or (b == Outer))
-
-    # Return a tuple of the neighbors of a given location.
-    def neighbors(self, state, location):
-        row, col = location[0], location[1]
-        nt = ((row-1, col-1), (row-1, col), (row-1, col+1), (row, col+1), \
-              (row+1, col+1), (row+1, col), (row+1, col-1), (row, col-1))
-        if state.gett(location) == Outer:
-            includelist = range(8)
-            for i in range(8):
-                for j in (0, 1):
-                    if (nt[i][j] < 0) or (nt[i][j] > state.size + 1):
-                        if i in includelist:
-                            includelist.remove(i)
-            nt = tuple(nt[i] for i in includelist)
-        return nt
-        
-        
-        
-        
-        

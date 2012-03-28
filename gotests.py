@@ -33,12 +33,14 @@ def test_2():
     s = BoardState()
     s.stat_gen()
     
-    assert g.neighbors(s, (5,5)) == \
+    assert s.neighbors((5,5)) == \
            ((4,4),(4,5),(4,6),(5,6),(6,6),(6,5),(6,4),(5,4))
            
-    assert g.neighbors(s, (0,0)) == ((0,1),(1,1),(1,0))
+    assert s.neighbors((0,0)) == ((0,1),(1,1),(1,0))
     
-    assert g.neighbors(s, (7,20)) == ((6,19),(6,20),(8,20),(8,19),(7,19))
+    assert s.neighbors((7,20)) == ((6,19),(6,20),(8,20),(8,19),(7,19))
+    
+    print s.neighbors((0,0), allied = True)
     
     print "PASSED."
     
