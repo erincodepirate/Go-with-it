@@ -182,6 +182,8 @@ class BoardState:
                     self.black_stone_list.append((i,j))
                 elif self.get(i, j) == White:
                     self.white_stone_list.append((i,j))
+        self.adj_lists_black = self.adjacency_lists(Black)
+        self.adj_lists_white = self.adjacency_lists(White)
                     
     # Return a list of the neighbors of a given location. If allied is set
     # to True, only nodes of the same type are included.
@@ -204,7 +206,7 @@ class BoardState:
     
     # Return an adjacency lists representation of the graph formed by the
     # given player's stones (as tuples).
-    def adjacency_tuples(self, player):
+    def adjacency_lists(self, player):
         if player == Black:
             node_list = self.black_stone_list
         else:
@@ -214,12 +216,56 @@ class BoardState:
                        for node in node_list)
         return tuple(tuple(l) for l in hybrid)
 
+    # Outside interface for the cycle_r() recursive call -- returns a list
+    # of all cycles which include the given root point (viz. new move)
+    def cycles(self, root):
+        self.cycle_list = []
+        self.cycle_r(root, root, [root])
+        return self.cycle_list
+    
+    # Recursive function called by cycles
+    def cycle_r(self, root, current, cycle):
+        nbhd = []
+        if self.gett(root) == Black:
+            alists = self.adj_lists_black
+        else:
+            alists = self.adj_lists_white
+        for l in alists:
+            if l[0] == current:
+                nbhd = l
+                break
+        for i in range(1, len(nbhd)):
+            if nbhd[i] == root:
+                self.cycle_list.append(cycle + [nbhd[i]])
+            elif nbhd[i] in cycle:
+                pass
+            else:
+                self.cycle_r(root, nbhd[i], cycle + [nbhd[i]])
+    
+    # Return a list of all nodes contained within the given cycle.
+    def enclosed_nodes(self, cycle):
+        rows = [node[0] for node in cycle]
+        cols = [node[1] for node in cycle]
+        left, right = min(cols), max(cols)
+        top, bottom = min(rows), max(rows)
+        node_list = []
+        for i in range(top, bottom):
+            interior = False
+            for j in range(left, right):
+                if (i,j) in cycle:
+                    interior = not interior
+                elif interior:
+                    node_list.append((i,j))
+                else:
+                    pass
+        return node_list
+        
     # Print the board in a more-or-less pretty way
     def display(self):
-        alphabet = 'abcdefghjklmnopqrstuvwxyz'
+        letters = 'abcdefghjklmnopqrst'
         print "  ",
         for i in range(self.size):
-            print alphabet[i],
+            print letters[i],
         print ""
         for i in range(1, self.size + 1):
             print "%2d" % (self.size - i + 1),
