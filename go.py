@@ -174,8 +174,8 @@ class BoardState:
         self.legal_move_list = []
         self.black_stone_list = []
         self.white_stone_list = []
-        for i in range(1, self.size + 1):
-            for j in range(1, self.size + 1):
+        for i in range(self.size + 2):
+            for j in range(self.size + 2):
                 if self.get(i, j) == Open:
                     self.legal_move_list.append((i,j))
                 elif self.get(i, j) == Black:
@@ -183,40 +183,46 @@ class BoardState:
                 elif self.get(i, j) == White:
                     self.white_stone_list.append((i,j))
                     
-    # Return a tuple of the neighbors of a given location. If allied is set
-    # to True, only nodes of the same type or Outer nodes will be included.
-    # BROKEN WHEN ALLIED SET TRUE...
-    def neighbors(self, location, allied):
+    # Return a list of the neighbors of a given location. If allied is set
+    # to True, only nodes of the same type are included.
+    def neighbors(self, location):
         row, col = location[0], location[1]
         nt = ((row-1, col-1), (row-1, col), (row-1, col+1), (row, col+1), \
               (row+1, col+1), (row+1, col), (row+1, col-1), (row, col-1))
-        if self.gett(location) == Outer:
-            includelist = range(8)
-            for i in range(8):
-                for j in (0, 1):
-                    if (nt[i][j] < 0) or (nt[i][j] > self.size + 1):
-                        if i in includelist:
-                            includelist.remove(i)
-                if allied and i in includelist:
-                    print "..."
-                    if not self.same(self.gett(nt[i]), self.gett(location)):
-                        includelist.remove(i)
-            nt = tuple(nt[i] for i in includelist)
-        return nt
+        nl = []
+        for n in nt:
+            if (n[0] < 0) or (n[0] > self.size + 1): continue
+            if (n[1] < 0) or (n[1] > self.size + 1): continue
+            if self.similar(self.gett(location), self.gett(n)):
+                nl.append(n)
+        return nl
         
     # Return true iff nodes are considered adjacent for graph / enclosure
-    # purposes.
-    def same(self, a, b):
-        return False #((a == b) or (a == Outer) or (b == Outer))
+    # purposes. Note the asymmetry.
+    def similar(self, a, b):
+        return ((a == b) or (b == Outer))
     
+    # Return an adjacency lists representation of the graph formed by the
+    # given player's stones (as tuples).
     def adjacency_tuples(self, player):
-        node_list = black_stone_list if player == Black else white_stone_list
-        return tuple((node) + self.neighbors(node, allied = True) \
-                     for node in node_list)
+        if player == Black:
+            node_list = self.black_stone_list
+        else:
+            node_list = self.white_stone_list
+        # The following is an ugly hack, but it works...
+        hybrid = tuple([node] + self.neighbors(node) \
+                       for node in node_list)
+        return tuple(tuple(l) for l in hybrid)
 
     # Print the board in a more-or-less pretty way
     def display(self):
+        alphabet = 'abcdefghjklmnopqrstuvwxyz'
+        print "  ",
+        for i in range(self.size):
+            print alphabet[i],
+        print ""
         for i in range(1, self.size + 1):
+            print "%2d" % (self.size - i + 1),
             for j in range(1, self.size + 1):
                 if self.get(i, j) == Black:
                     print 'B',
