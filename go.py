@@ -212,18 +212,17 @@ class BoardState:
         else:
             node_list = self.white_stone_list
         # The following is an ugly hack, but it works...
-        hybrid = tuple([node] + self.neighbors(node) \
-                       for node in node_list)
+        hybrid = tuple([node] + self.neighbors(node) for node in node_list)
         return tuple(tuple(l) for l in hybrid)
 
     # Outside interface for the cycle_r() recursive call -- returns a list
-    # of all cycles which include the given root point (viz. new move)
+    # of all cycles which include the given root point (viz. a new move)
     def cycles(self, root):
         self.cycle_list = []
         self.cycle_r(root, root, [root])
         return self.cycle_list
     
-    # Recursive function called by cycles
+    # Recursive function called by cycles()
     def cycle_r(self, root, current, cycle):
         nbhd = []
         if self.gett(root) == Black:
@@ -237,9 +236,7 @@ class BoardState:
         for i in range(1, len(nbhd)):
             if nbhd[i] == root:
                 self.cycle_list.append(cycle + [nbhd[i]])
-            elif nbhd[i] in cycle:
-                pass
-            else:
+            elif nbhd[i] not in cycle:
                 self.cycle_r(root, nbhd[i], cycle + [nbhd[i]])
     
     # Return a list of all nodes contained within the given cycle.
@@ -256,8 +253,6 @@ class BoardState:
                     interior = not interior
                 elif interior:
                     node_list.append((i,j))
-                else:
-                    pass
         return node_list
         
     # Print the board in a more-or-less pretty way
