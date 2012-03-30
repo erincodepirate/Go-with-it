@@ -137,18 +137,19 @@ class BoardState:
     """Holds one state of the Go board as a list of lists, which is, for all
        intents and purposes, a 2d list. Dimensions extend one unit past the
        edge in each direction -- these outer nodes contain entries called Outer"""
-    def __init__(self, to_move = Black, size = 19, board = None):
+    def __init__(self, to_move = Black, size = 19, existing_state = None):
         self.to_move = to_move
         self.size = size
-        if board == None:
+        if existing_state == None:
             self.board = [Open]*((size+2)**2)
             for index in range(size + 2):
                 self.change(index, 0, Outer)
                 self.change(index, size + 1, Outer)
                 self.change(0, index, Outer)
                 self.change(size + 1, index, Outer)
+            self.stat_gen()
         else:
-            self.board = board
+            self.board = existing_state.board[:]
     
     # Return the value of the node at row, col
     def get(self, row, col):
@@ -182,91 +183,42 @@ class BoardState:
                     self.black_stone_list.append((i,j))
                 elif self.get(i, j) == White:
                     self.white_stone_list.append((i,j))
-        self.adj_lists_black = self.adjacency_lists(Black)
-        self.adj_lists_white = self.adjacency_lists(White)
-                    
-    # Return a list of the neighbors of a given location. If allied is set
-    # to True, only nodes of the same type are included.
-    def neighbors(self, location):
-        row, col = location[0], location[1]
-        nt = ((row-1, col-1), (row-1, col), (row-1, col+1), (row, col+1), \
-              (row+1, col+1), (row+1, col), (row+1, col-1), (row, col-1))
-        nl = []
-        for n in nt:
-            if (n[0] < 0) or (n[0] > self.size + 1): continue
-            if (n[1] < 0) or (n[1] > self.size + 1): continue
-            if self.similar(self.gett(location), self.gett(n)):
-                nl.append(n)
-        return nl
-        
-    # Return true iff nodes are considered adjacent for graph / enclosure
-    # purposes. Note the asymmetry.
-    def similar(self, a, b):
-        return ((a == b) or (b == Outer))
     
-    # Return an adjacency lists representation of the graph formed by the
-    # given player's stones (as tuples).
-    def adjacency_lists(self, player):
-        if player == Black:
-            node_list = self.black_stone_list
-        else:
-            node_list = self.white_stone_list
-        # The following is an ugly hack, but it works...
-        hybrid = tuple([node] + self.neighbors(node) for node in node_list)
-        return tuple(tuple(l) for l in hybrid)
-
-    # Outside interface for the cycle_r() recursive call -- returns a list
-    # of all cycles which include the given root point (viz. a new move)
-    def cycles(self, root):
-        self.cycle_list = []
-        self.cycle_r(root, root, [root])
-        return self.cycle_list
+    # Return a list of the stones captured by the given move
+    def capture_list(self, move):
+        player = self.gett(move)
+        caplist = []
+        for node in self.adjacent_nodes(move):
+            if self.gett(node) != opponent(player):
+                continue
+            self.rcaplist = []
+            self.capture_r(self.gett(move), node)
+            for capnode in self.rcaplist:
+                if capnode not in caplist:
+                    caplist.append(capnode)
+        return caplist
     
-    # Recursive function called by cycles()
-    def cycle_r(self, root, current, cycle):
-        nbhd = []
-        if self.gett(root) == Black:
-            alists = self.adj_lists_black
-        else:
-            alists = self.adj_lists_white
-        for l in alists:
-            if l[0] == current:
-                nbhd = l
+    # Recursive exploration function called by capture_list()
+    def capture_r(self, player, current):
+        if current in self.rcaplist:
+            return
+        self.rcaplist.append(current)
+        for node in self.adjacent_nodes(current):
+            if self.gett(node) == player:
+                continue
+            elif self.gett(node) == Outer:
+                continue
+            elif self.gett(node) == opponent(player):
+                self.capture_r(player, node)
+            else:
+                self.rcaplist = []
                 break
-        for i in range(1, len(nbhd)):
-            if nbhd[i] == root:
-                self.cycle_list.append(cycle + [nbhd[i]])
-            elif nbhd[i] not in cycle:
-                self.cycle_r(root, nbhd[i], cycle + [nbhd[i]])
     
-    # Return a list of all nodes contained within the given cycle.
-    def enclosed_nodes(self, cycle):
-        rows = [node[0] for node in cycle]
-        cols = [node[1] for node in cycle]
-        left, right = min(cols), max(cols)
-        top, bottom = min(rows), max(rows)
-        node_list1 = []
-        for i in range(top, bottom):
-            interior = False
-            for j in range(left, right):
-                if (i,j) in cycle:
-                    interior = not interior
-                elif interior:
-                    node_list1.append((i,j))
-        node_list2 = []
-        for i in range(left, right):
-	    interior = False
-	    for j in range(top, bottom):
-                if (j,i) in cycle:
-                    interior = not interior
-                elif interior:
-                    node_list2.append((j,i))
-        node_list = []
-        for node in node_list1:
-	    if node in node_list2:
-                node_list.append(node)
-            
-        return node_list
+    # Return the four nodes sharing a side with the given node
+    # --> Used by capture_list() and capture_r()
+    def adjacent_nodes(self, node):
+        return ((node[0]-1, node[1]), (node[0], node[1]-1), \
+                (node[0]+1, node[1]), (node[0], node[1]+1))
         
     # Print the board in a more-or-less pretty way
     def display(self):
@@ -286,6 +238,7 @@ class BoardState:
                     print '.',
             print "" # Carriage return
 
+    # Print the board as a matrix with row and column labels
     def display_matrix(self):
         print "  ",
         for i in range(1, self.size + 1):
@@ -312,7 +265,6 @@ class BoardState:
 class Go(Game):
     def __init__(self):
         self.current_state = BoardState()
-        self.current_state.stat_gen()
 
     # Return a list of legal moves as row-col integer 2-tuples.
     def legal_moves(self, state):
@@ -320,12 +272,17 @@ class Go(Game):
     
     # Return a new board with the result of a given move (assumed to be legal).
     def make_move(self, move, state):
-        new_board = BoardState(opponent(state.to_move), state.size, state)
-        
-        # To be implemented...
-        
-        return new_board
+        new_state = BoardState(opponent(state.to_move), state.size, state)
+        new_state.changet(move, state.to_move)
+        for stone in new_state.capture_list(move):
+            new_state.changet(stone, Open)
+        new_state.stat_gen()
+        return new_state
         
     def utility(self, state, player):
-        pass
+        # Something simple for now...
+        if player == Black:
+            return len(state.black_stone_list) - len(state.white_stone_list)
+        else:
+            return len(state.white_stone_list) - len(state.black_stone_list)
     
