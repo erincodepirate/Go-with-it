@@ -245,14 +245,27 @@ class BoardState:
         cols = [node[1] for node in cycle]
         left, right = min(cols), max(cols)
         top, bottom = min(rows), max(rows)
-        node_list = []
+        node_list1 = []
         for i in range(top, bottom):
             interior = False
             for j in range(left, right):
                 if (i,j) in cycle:
                     interior = not interior
                 elif interior:
-                    node_list.append((i,j))
+                    node_list1.append((i,j))
+        node_list2 = []
+        for i in range(left, right):
+	    interior = False
+	    for j in range(top, bottom):
+                if (j,i) in cycle:
+                    interior = not interior
+                elif interior:
+                    node_list2.append((j,i))
+        node_list = []
+        for node in node_list1:
+	    if node in node_list2:
+                node_list.append(node)
+            
         return node_list
         
     # Print the board in a more-or-less pretty way
@@ -264,6 +277,22 @@ class BoardState:
         print ""
         for i in range(1, self.size + 1):
             print "%2d" % (self.size - i + 1),
+            for j in range(1, self.size + 1):
+                if self.get(i, j) == Black:
+                    print 'B',
+                elif self.get(i, j) == White:
+                    print 'W',
+                else:
+                    print '.',
+            print "" # Carriage return
+
+    def display_matrix(self):
+        print "  ",
+        for i in range(1, self.size + 1):
+            print i%10,
+        print ""
+        for i in range(1, self.size + 1):
+            print "%2d" % i,
             for j in range(1, self.size + 1):
                 if self.get(i, j) == Black:
                     print 'B',
