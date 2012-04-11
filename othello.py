@@ -240,7 +240,9 @@ class othello_player:
        return (2, None, None)        
 
 def play_othello(game=None,initialTime=1800,
-                 player1=othello_player("p1"),player2=othello_player("p2"), difference, table, mobility):
+                 player1=othello_player("p1"),
+		 player2=othello_player("p2"),
+		 weights=(1,1,1)):
     "Play an 2-person, move-alternating Othello game."
     # This is play_game with stuff added to keep track of time.
     game = game or Othello()
@@ -249,8 +251,8 @@ def play_othello(game=None,initialTime=1800,
     # initialize the amount of time for each player.  Units are seconds.
     # 1800 seconds is 30 minutes
     clocks = {player1: initialTime, player2: initialTime}
-    player1.initialize(state, initialTime, Black)
-    player2.initialize(state, initialTime, White)
+    player1.initialize(state, initialTime, Black, weights)
+    player2.initialize(state, initialTime, White, weights)
     previousPass = 0
     while True:
         for player in players:
@@ -300,7 +302,7 @@ def play_othello(game=None,initialTime=1800,
             game.display(state)
             if game.terminal_test(state):
                 print player1.name,": ", state._board.count(Black), player2.name,": ", state._board.count(White)
-                return state.count_difference()
+                return state._board.count(Black) - state._board.count(White)
 
 #______________________________________________________________________________
 # Some Sample Games

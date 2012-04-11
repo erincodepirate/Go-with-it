@@ -26,9 +26,9 @@ class WeightPlayer(othello_player):
                         2,  1,  1,  1  ]
 	self.weights = weights
     def calculate_utility(self, boardstate):
-        return self.weights(0) * mycount_difference + \
-			self.weights(1) * self.utility_table(boardstate) + \
-			self.weights(2) * self.friendly_mobility(boardstate)       
+        return self.weights[0] * self.mycount_difference(boardstate) + \
+			self.weights[1] * self.utility_table(boardstate) + \
+			self.weights[2] * self.friendly_mobility(boardstate)       
     def alphabeta_parameters(self, boardstate, remainingTime):
         if len(boardstate.getPieces()) \
             < 26 / (self.performance * self.endurance) \
