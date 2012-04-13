@@ -3,7 +3,7 @@ from othelloplayers import *
 from random import *
 
 def energy(weights):
-    playerList = [OpheliaA]
+    playerList = [OpheliaA, Straight4]
 
     E = 0
     
@@ -55,13 +55,13 @@ def simulated_annealing(temperature, emax, kmax):
                 + " energy: " + e
                 + " e_best: " + e_best
                 + "\n")
-
+    f.close()
     return s_best
         
 def temperature_unit_linear(t):
-        return 1.0 - t
+    return 1.0 - t
     
-def randomstate:
+def randomstate():
     return (random.random(), random.random(), random.random())
 
  
