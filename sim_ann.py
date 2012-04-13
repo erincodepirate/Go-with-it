@@ -1,9 +1,9 @@
 from weightothello import *
 from othelloplayers import *
-from random import *
+import random
 
 def energy(weights):
-    playerList = [OpheliaA, Straight4]
+    playerList = [FancyTable4, Straight4]
 
     E = 0
     
@@ -29,9 +29,9 @@ def simulated_annealing(temperature, emax, kmax):
     s_best = initial_state
 
     f.write(time.strftime("%I:%M %p %A %d %B %Y") \
-            + " init state: " + initial_state \
+            + " init state: " + stateToString(initial_state) \
+            + " s_best: " + stateToString(s_best) \
             + " e_best: " + e_best \
-            + " s_best: " + s_best \
             + "\n")
 
     k = 0.0
@@ -50,8 +50,8 @@ def simulated_annealing(temperature, emax, kmax):
 
         f.write(time.strftime("%I:%M %p %A %d %B %Y") \
                 + " k: " + k
-                + " state: " + s
-                + " s_best: " + s_best
+                + " state: " + stateToString(s)
+                + " s_best: " + stateToString(s_best)
                 + " energy: " + e
                 + " e_best: " + e_best
                 + "\n")
@@ -64,4 +64,6 @@ def temperature_unit_linear(t):
 def randomstate():
     return (random.random(), random.random(), random.random())
 
- 
+def stateToString(tup3):
+    return "(%f, %f, %f)" % tup3
+
