@@ -24,22 +24,9 @@ def energy(weights):
 # a function that uses a simulated annealing technique to calculate the optimal
 # weight values for the othello player
 def simulated_annealing(temperature, emax, kmax):
-    f = open("simulated_annealing.log", 'a')
-    f.write(time.strftime("%I:%M %p %A %d %B %Y") \
-            + " Initializing simulated annealing...\n")
-    f.close()
-
     initial_state = randomstate()
     e_best = e = energy(initial_state)
     s_best = s = initial_state
-
-    f = open("simulated_annealing.log", 'a')
-    f.write(time.strftime("%I:%M %p %A %d %B %Y") \
-            + " init state: " + stateToString(initial_state) \
-            + " s_best: " + stateToString(s_best) \
-            + " e_best: %d" % e_best \
-            + "\n")
-    f.close()
 
     k = 0.0
     while k < kmax and e > emax:
@@ -50,11 +37,13 @@ def simulated_annealing(temperature, emax, kmax):
 
         f = open("simulated_annealing.log", 'a')
         f.write(time.strftime("%I:%M %p %A %d %B %Y") \
-                + " k: %d" % k \
-                + " state: " + stateToString(s) \
-                + " s_best: " + stateToString(s_best) \
-                + " energy: %d" % e \
-                + " e_best: %d" % e_best \
+                + " %d" % k \
+                + " " + stateToString(s_new)
+		+ " %d" % e_new \
+		+ " " + stateToString(s) \
+		+ " %d" % e \
+                + " " + stateToString(s_best) \
+                + " %d" % e_best \
                 + "\n")
         f.close()
 
@@ -66,15 +55,6 @@ def simulated_annealing(temperature, emax, kmax):
             e_best = e_new
         k += 1.0
 
-        f = open("simulated_annealing.log", 'a')
-        f.write(time.strftime("%I:%M %p %A %d %B %Y") \
-                + " k: %d" % k \
-                + " state: " + stateToString(s) \
-                + " s_best: " + stateToString(s_best) \
-                + " energy: %d" % e \
-                + " e_best: %d" % e_best \
-                + "\n")
-        f.close()
     return s_best
 
 # temperature schedule for the simulated annealing algorithm
@@ -88,5 +68,5 @@ def randomstate():
 
 # converts the returned state into a string that can be printed
 def stateToString(tup3):
-    return "(%f, %f, %f)" % tup3
+    return "( %f, %f, %f )" % tup3
 
