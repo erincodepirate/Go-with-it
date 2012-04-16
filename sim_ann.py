@@ -6,7 +6,7 @@ import random
 # a function to determine the energy that will be used in the simulated
 # annealing function
 def energy(weights):
-    playerList = [FancyTable4, Straight4]
+    playerList = [FancyTable2, Straight2]
 
     E = 0
     
