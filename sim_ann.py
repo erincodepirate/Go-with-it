@@ -58,7 +58,7 @@ def simulated_annealing(temperature, emax, kmax):
                 + " energy: %d" % e \
                 + " e_best: %d" % e_best \
                 + "\n")
-         f.close()
+        f.close()
     return s_best
         
 def temperature_unit_linear(t):
