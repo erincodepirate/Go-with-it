@@ -20,7 +20,7 @@ def energy(weights):
     return E
 
 def simulated_annealing(temperature, emax, kmax):
-    f = open("simulated_annealing.log", 'w+')
+    f = open("simulated_annealing.log", 'a')
     f.write(time.strftime("%I:%M %p %A %d %B %Y") \
             + "Initializing simulated annealing...\n")
     f.close()
@@ -29,7 +29,7 @@ def simulated_annealing(temperature, emax, kmax):
     e_best = e = energy(initial_state)
     s_best = s = initial_state
 
-    f = open("simulated_annealing.log", 'w+')
+    f = open("simulated_annealing.log", 'a')
     f.write(time.strftime("%I:%M %p %A %d %B %Y") \
             + " init state: " + stateToString(initial_state) \
             + " s_best: " + stateToString(s_best) \
@@ -51,7 +51,7 @@ def simulated_annealing(temperature, emax, kmax):
             e_best = e_new
         k += 1.0
 
-        f = open("simulated_annealing.log", 'w+')
+        f = open("simulated_annealing.log", 'a')
         f.write(time.strftime("%I:%M %p %A %d %B %Y") \
                 + " k: %d" % k \
                 + " state: " + stateToString(s) \
