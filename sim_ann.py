@@ -20,19 +20,21 @@ def energy(weights):
 
 def simulated_annealing(temperature, emax, kmax):
     f = open("simulated_annealing.log", 'w+')
-
     f.write(time.strftime("%I:%M %p %A %d %B %Y") \
             + "Initializing simulated annealing...\n")
+    f.close()
 
     initial_state = randomstate()
     e_best = e = energy(initial_state)
     s_best = initial_state
 
+    f = open("simulated_annealing.log", 'w+')
     f.write(time.strftime("%I:%M %p %A %d %B %Y") \
             + " init state: " + stateToString(initial_state) \
             + " s_best: " + stateToString(s_best) \
-            + " e_best: " + e_best \
+            + " e_best: %d" % e_best \
             + "\n")
+    f.close()
 
     k = 0.0
     while k < kmax and e > emax:
@@ -48,14 +50,15 @@ def simulated_annealing(temperature, emax, kmax):
             e_best = e_new
         k += 1.0
 
+        f = open("simulated_annealing.log", 'w+')
         f.write(time.strftime("%I:%M %p %A %d %B %Y") \
-                + " k: " + k
-                + " state: " + stateToString(s)
-                + " s_best: " + stateToString(s_best)
-                + " energy: " + e
-                + " e_best: " + e_best
+                + " k: %d" % k \
+                + " state: " + stateToString(s) \
+                + " s_best: " + stateToString(s_best) \
+                + " energy: %d" % e \
+                + " e_best: %d" % e_best \
                 + "\n")
-    f.close()
+         f.close()
     return s_best
         
 def temperature_unit_linear(t):
