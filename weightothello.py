@@ -16,10 +16,7 @@ from othello import *
 class WeightPlayer(othello_player):
     def initialize(self, boardstate, totalTime, color, weights):
         print "Initializing", self.name + '...'
-        from timeit import timeit
-        self.performance = 1.6 / timeit('for i in range(10): oct(i)')
-        print "  --> Determined hardware performance factor:", self.performance
-        self.endurance, self.mycolor = totalTime / 300., color
+        self.mycolor = color
         self.table = [ 10, -1,  4,  2, \
                        -1, -1,  2,  1, \
                         4,  2,  2,  1, \
@@ -30,11 +27,7 @@ class WeightPlayer(othello_player):
 			self.weights[1] * self.utility_table(boardstate) + \
 			self.weights[2] * self.friendly_mobility(boardstate)       
     def alphabeta_parameters(self, boardstate, remainingTime):
-        if len(boardstate.getPieces()) \
-            < 26 / (self.performance * self.endurance) \
-        or remainingTime < 180 / self.performance:
-            return (2, None, None)
-        return (4, None, None)
+        return (2, None, None)
     def friendly_mobility(self, boardstate):
         if boardstate.getPlayer() == self.mycolor:
             return len(boardstate.legal_moves())
