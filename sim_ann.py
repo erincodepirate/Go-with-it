@@ -27,7 +27,7 @@ def simulated_annealing(temperature, emax, kmax):
 
     initial_state = randomstate()
     e_best = e = energy(initial_state)
-    s_best = initial_state
+    s_best = s = initial_state
 
     f = open("simulated_annealing.log", 'w+')
     f.write(time.strftime("%I:%M %p %A %d %B %Y") \
