@@ -1,5 +1,6 @@
 from weightothello import *
 from othelloplayers import *
+from math import exp
 import random
 
 def energy(weights):
