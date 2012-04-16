@@ -26,7 +26,7 @@ def energy(weights):
 def simulated_annealing(temperature, emax, kmax):
     f = open("simulated_annealing.log", 'a')
     f.write(time.strftime("%I:%M %p %A %d %B %Y") \
-            + "Initializing simulated annealing...\n")
+            + " Initializing simulated annealing...\n")
     f.close()
 
     initial_state = randomstate()
@@ -47,6 +47,17 @@ def simulated_annealing(temperature, emax, kmax):
         s_new = randomstate()
         e_new = energy(s_new)
         delta_energy = e_new - e
+
+        f = open("simulated_annealing.log", 'a')
+        f.write(time.strftime("%I:%M %p %A %d %B %Y") \
+                + " k: %d" % k \
+                + " state: " + stateToString(s) \
+                + " s_best: " + stateToString(s_best) \
+                + " energy: %d" % e \
+                + " e_best: %d" % e_best \
+                + "\n")
+        f.close()
+
         if random.random() < exp(-delta_energy/T):
              e = e_new
              s = s_new
