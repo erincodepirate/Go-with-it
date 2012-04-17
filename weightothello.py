@@ -30,12 +30,12 @@ class WeightPlayer(othello_player):
         return (2, None, None)
     def friendly_mobility(self, boardstate):
         if boardstate.getPlayer() == self.mycolor:
-            return len(boardstate.legal_moves())
+            return len(boardstate.legal_moves())/10.0
         else:
-            return -len(boardstate.legal_moves())
+            return -len(boardstate.legal_moves())/10.0
     def mycount_difference(self,boardstate):
         return (boardstate._board.count(self.mycolor) -
-                boardstate._board.count(opponent(self.mycolor)))
+                boardstate._board.count(opponent(self.mycolor)))/64.0
     def utility_table(self, boardstate):
         # Get the piecemap, fold it into quarters, add symmetrically
         # corresponding entries, and multiply that by the utility table above,
@@ -47,7 +47,7 @@ class WeightPlayer(othello_player):
             col = 7 - entry[1] if entry[1] > 3 else entry[1]
             niceness = 1 if piecemap[entry] == self.mycolor else -1
             result += self.table[4 * row + col] * niceness
-        return result
+        return result/132.0
 # CS 480
 # Programming Assignment 2
 # Othello Player
