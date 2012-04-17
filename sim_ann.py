@@ -3,6 +3,8 @@ from othelloplayers import *
 from math import exp
 import random
 
+# a function to determine the energy that will be used in the simulated
+# annealing function
 def energy(weights):
     playerList = [FancyTable4, Straight4]
 
@@ -19,6 +21,8 @@ def energy(weights):
 			  weights)
     return E
 
+# a function that uses a simulated annealing technique to calculate the optimal
+# weight values for the othello player
 def simulated_annealing(temperature, emax, kmax):
     f = open("simulated_annealing.log", 'a')
     f.write(time.strftime("%I:%M %p %A %d %B %Y") \
@@ -61,13 +65,17 @@ def simulated_annealing(temperature, emax, kmax):
                 + "\n")
         f.close()
     return s_best
-        
+
+# temperature schedule for the simulated annealing algorithm
 def temperature_unit_linear(t):
     return 1.0 - t
-    
+
+# a function to calculate a random state, to be used in the simulated annealing
+# function
 def randomstate():
     return (random.random(), random.random(), random.random())
 
+# converts the returned state into a string that can be printed
 def stateToString(tup3):
     return "(%f, %f, %f)" % tup3
 
