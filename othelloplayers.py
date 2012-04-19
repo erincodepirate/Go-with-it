@@ -260,7 +260,7 @@ class AEPlayer2(othello_player):
     #  color is one of Black or White (which are just constants defined
     #  in the othello.py file) saying what color the player will be
     #  playing.
-    def initialize(self, boardstate, totalTime, color):
+    def initialize(self, boardstate, totalTime, color, weights):
         print "Initializing", self.name
         self.mycolor = color
         # get the other player's color for use in heuristics
