@@ -6,7 +6,7 @@ import random
 # a function to determine the energy that will be used in the simulated
 # annealing function
 def energy(weights):
-    playerList = [FancyTable2, Straight2]
+    playerList = [FancyTable2, Straight2, Mobility2, OpheliaX2, AEPlayer2]
 
     E = 0
     
@@ -64,7 +64,7 @@ def temperature_linear(t):
 # a function to calculate a random state, to be used in the simulated annealing
 # function
 def perturb(start_state):
-    epsilon = .1
+    epsilon = .5
     new_state = [0.0, 0.0, 0.0]
     sum_of_squares = 0.0
     for i in range(len(start_state)):
