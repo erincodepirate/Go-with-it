@@ -1,6 +1,6 @@
 from weightothello import *
 from othelloplayers import *
-from math import exp, sqrt
+from math import exp, sqrt, cos
 import random
 
 # a function to determine the energy that will be used in the simulated
@@ -72,6 +72,10 @@ def temperature_exp10(t):
 # a circular temperature schedule
 def temperature_circ(t):
     return 256.0*(1-sqrt(2*t-t**2))
+
+# a sinusoidal temperature schedule
+def temperature_cos(t):
+    return 256.0*cos(t*3.1416/2)
 
 # a function to calculate a random state, to be used in the simulated annealing
 # function
