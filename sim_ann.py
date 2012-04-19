@@ -65,10 +65,10 @@ def temperature_linear(t):
 # function
 def perturb(start_state):
     epsilon = .1
-    new_state = start_state
+    new_state = (0.0, 0.0, 0.0)
     sum_of_squares = 0.0
     for i in range(len(start_state)):
-	new_state[i] += random.random()*2.0*epsilon - epsilon
+	new_state[i] = start_state[i] + random.random()*2.0*epsilon - epsilon
         sum_of_squares += new_state[i]*new_state[i]
     for i in range(len(start_state)):
         new_state[i] /= sqrt(sum_of_squares)
