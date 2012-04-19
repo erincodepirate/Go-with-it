@@ -61,6 +61,10 @@ def simulated_annealing(temperature, emax, kmax):
 def temperature_linear(t):
     return 256.0*(1.0 - t)
 
+# a decaying exponential temperature schedule
+def temperature_exp5(t):
+    return 256.0*exp(-5.0*t)
+
 # a function to calculate a random state, to be used in the simulated annealing
 # function
 def perturb(start_state):
