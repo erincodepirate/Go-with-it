@@ -205,19 +205,16 @@ class FancyTable4(othello_player):
                 result += self.table_1[4*row + col] * niceness
         return result
         
-class OpheliaM(othello_player):
+class Mobility2(othello_player):
     def initialize(self, boardstate, totalTime, color, weights):
         print "Initializing", self.name + '...'
-        from timeit import timeit
-        self.performance = 1.6 / timeit('for i in range(10): oct(i)')
-        print "  --> Determined hardware performance factor:", self.performance
-        self.endurance, self.mycolor = totalTime / 300., color
+        self.mycolor = color
                           
     def calculate_utility(self, boardstate):
         return self.friendly_mobility(boardstate)       
              
     def alphabeta_parameters(self, boardstate, remainingTime):
-        return (4, None, None)
+        return (2, None, None)
         
     def friendly_mobility(self, boardstate):
         # Simply returns the number of available moves (negative when it's
@@ -227,7 +224,7 @@ class OpheliaM(othello_player):
         else:
             return -len(boardstate.legal_moves())
             
-class OpheliaX(othello_player):
+class OpheliaX2(othello_player):
     def initialize(self, boardstate, totalTime, color, weights):
 	print "Initializing..."
         self.mycolor = color
@@ -239,7 +236,7 @@ class OpheliaX(othello_player):
         return     self.utility_table(boardstate) \
              + 3 * self.friendly_mobility(boardstate)       
     def alphabeta_parameters(self, boardstate, remainingTime):
-        return (4, None, None)
+        return (2, None, None)
     def friendly_mobility(self, boardstate):
         if boardstate.getPlayer() == self.mycolor:
             return len(boardstate.legal_moves())
