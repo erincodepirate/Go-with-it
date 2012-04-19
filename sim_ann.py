@@ -67,7 +67,7 @@ def temperature_exp5(t):
 
 # a circular temperature schedule
 def temperature_circ(t):
-    return 256.0*(1-sqrt(2*x-x**2))
+    return 256.0*(1-sqrt(2*t-t**2))
 
 # a function to calculate a random state, to be used in the simulated annealing
 # function
