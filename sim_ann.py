@@ -76,5 +76,5 @@ def perturb(start_state):
 
 # converts the returned state into a string that can be printed
 def stateToString(tup3):
-    return "( %f %f %f )" % tup3
+    return "( %f %f %f )" % tuple(tup3)
 
