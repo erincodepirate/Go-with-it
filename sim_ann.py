@@ -1,6 +1,6 @@
 from weightothello import *
 from othelloplayers import *
-from math import exp
+from math import exp, sqrt
 import random
 
 # a function to determine the energy that will be used in the simulated
@@ -24,14 +24,14 @@ def energy(weights):
 # a function that uses a simulated annealing technique to calculate the optimal
 # weight values for the othello player
 def simulated_annealing(temperature, emax, kmax):
-    initial_state = randomstate()
+    initial_state = perturb((0.0,0.0,0.0))
     e_best = e = energy(initial_state)
     s_best = s = initial_state
 
     k = 0.0
     while k < kmax and e > emax:
         T = temperature(k/kmax)
-        s_new = randomstate()
+        s_new = perturb(s)
         e_new = energy(s_new)
         delta_energy = e_new - e
 
@@ -58,15 +58,23 @@ def simulated_annealing(temperature, emax, kmax):
     return s_best
 
 # temperature schedule for the simulated annealing algorithm
-def temperature_unit_linear(t):
-    return 1.0 - t
+def temperature_linear(t):
+    return 256.0*(1.0 - t)
 
 # a function to calculate a random state, to be used in the simulated annealing
 # function
-def randomstate():
-    return (random.random(), random.random(), random.random())
+def perturb(start_state):
+    epsilon = .1
+    new_state = start_state
+    sum_of_squares = 0.0
+    for i in range(len(start_state)):
+	new_state[i] += random.random()*2.0*epsilon - epsilon
+        sum_of_squares += new_state[i]*new_state[i]
+    for i in range(len(start_state)):
+        new_state[i] /= sqrt(sum_of_squares)
+    return new_state
 
 # converts the returned state into a string that can be printed
 def stateToString(tup3):
-    return "( %f, %f, %f )" % tup3
+    return "( %f %f %f )" % tup3
 
