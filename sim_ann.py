@@ -24,7 +24,7 @@ def energy(weights):
 # a function that uses a simulated annealing technique to calculate the optimal
 # weight values for the othello player
 def simulated_annealing(temperature, emax, kmax):
-    initial_state = perturb((0.0,0.0,0.0))
+    initial_state = perturb([0.0,0.0,0.0])
     e_best = e = energy(initial_state)
     s_best = s = initial_state
 
@@ -65,7 +65,7 @@ def temperature_linear(t):
 # function
 def perturb(start_state):
     epsilon = .1
-    new_state = (0.0, 0.0, 0.0)
+    new_state = [0.0, 0.0, 0.0]
     sum_of_squares = 0.0
     for i in range(len(start_state)):
 	new_state[i] = start_state[i] + random.random()*2.0*epsilon - epsilon
