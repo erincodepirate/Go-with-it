@@ -65,6 +65,10 @@ def temperature_linear(t):
 def temperature_exp5(t):
     return 256.0*exp(-5.0*t)
 
+# another decaying exponential temperature schedule
+def temperature_exp10(t):
+    return 256.0*exp(-10.0*t)
+
 # a circular temperature schedule
 def temperature_circ(t):
     return 256.0*(1-sqrt(2*t-t**2))
