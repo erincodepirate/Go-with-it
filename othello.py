@@ -239,6 +239,7 @@ class othello_player:
         #            to evaluate the utility of board states.
        return (2, None, None)        
 
+# tweaked play_othello function so that it would take weights as input
 def play_othello(game=None,initialTime=1800,
                  player1=othello_player("p1"),
 		 player2=othello_player("p2"),
