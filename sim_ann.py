@@ -1,6 +1,13 @@
 # simulated annealing algorithm that takes a list of players and plays
 # them against the weighted player and tries to find an optimal solution
 # to beating the players
+#
+# Erin Clark
+# Andea Dunn
+# Chad Williamson
+#
+# CS480 Artificial Intelligence
+
 
 from weightothello import *
 from othelloplayers import *
