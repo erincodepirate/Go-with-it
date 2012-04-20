@@ -240,6 +240,7 @@ class othello_player:
        return (2, None, None)        
 
 # tweaked play_othello function so that it would take weights as input
+# and passes them to the players
 def play_othello(game=None,initialTime=1800,
                  player1=othello_player("p1"),
 		 player2=othello_player("p2"),
