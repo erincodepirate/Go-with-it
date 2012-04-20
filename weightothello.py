@@ -12,7 +12,7 @@ class WeightPlayer(othello_player):
                        -1, -1,  2,  1, \
                         4,  2,  2,  1, \
                         2,  1,  1,  1  ]
-	self.weights = weights
+        self.weights = weights
     def calculate_utility(self, boardstate):
         return self.weights[0] * self.mycount_difference(boardstate) + \
 			self.weights[1] * self.utility_table(boardstate) + \
@@ -33,7 +33,7 @@ class WeightPlayer(othello_player):
         # entry-by-entry. Add up the resulting numbers -- positively for
         # friendly pieces and negatively for the opponent. Return the result.
         piecemap, result = boardstate.getPieces(), 0
-	for entry in piecemap:
+        for entry in piecemap:
             row = 7 - entry[0] if entry[0] > 3 else entry[0]
             col = 7 - entry[1] if entry[1] > 3 else entry[1]
             niceness = 1 if piecemap[entry] == self.mycolor else -1

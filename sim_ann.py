@@ -23,13 +23,13 @@ def energy(weights):
     
     for player in playerList:
         E -= play_othello(Othello(), 86400,
-			  player("THANG_B"),
-			  WeightPlayer("WP_W"),
-			  weights)
-	E += play_othello(Othello(), 86400,
-			  WeightPlayer("WP_B"),
-			  player("THANG_W"),
-			  weights)
+                          player("THANG_B"),
+                          WeightPlayer("WP_W"),
+                          weights)
+        E += play_othello(Othello(), 86400,
+                          WeightPlayer("WP_B"),
+                          player("THANG_W"),
+                          weights)
     return E
 
 # a function that uses a simulated annealing technique to calculate the optimal
@@ -95,7 +95,7 @@ def perturb(start_state):
     new_state = [0.0, 0.0, 0.0]
     sum_of_squares = 0.0
     for i in range(len(start_state)):
-	new_state[i] = start_state[i] + random.random()*2.0*epsilon - epsilon
+        new_state[i] = start_state[i] + random.random()*2.0*epsilon - epsilon
         sum_of_squares += new_state[i]*new_state[i]
     for i in range(len(start_state)):
         new_state[i] /= sqrt(sum_of_squares)
