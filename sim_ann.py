@@ -1,3 +1,7 @@
+# simulated annealing algorithm that takes a list of players and plays
+# them against the weighted player and tries to find an optimal solution
+# to beating the players
+
 from weightothello import *
 from othelloplayers import *
 from math import exp, sqrt, cos

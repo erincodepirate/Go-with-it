@@ -1,3 +1,4 @@
+# Othello Player list to be used against the weighted player
 
 from othello import *
 
